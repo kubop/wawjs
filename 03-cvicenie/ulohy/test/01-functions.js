@@ -3,25 +3,30 @@ const assert = require("assert");
 
 describe("03-functions", function() {
   it("1. define function using FunctionDeclaration", function() {
-    // TODO:
-    //
-    //
-    //
+    
+    function f(... args) {
+      return args.join('');
+    }
+
     assert(typeof f === "function");
     assert(f("a", "b") === "ab");
     assert(f("a", "b", "c") === "abc");
   });
   it("2. define function using FunctionExpression", function() {
-    // TODO:
-    //
-    //
-    //
+    
+    var f = function(... args) {
+      return args.join('');
+    }
+
     assert(typeof f === "function");
     assert(f("a", "b") === "ab");
     assert(f("a", "b", "c") === "abc");
   });
   it("3. define function using ArrowFunctionExpression", function() {
-    // TODO:
+    
+    var f = (... args) => {
+      return args.join('');
+    }
 
     assert(typeof f === "function");
     assert(f("a", "b") === "ab");
@@ -29,11 +34,14 @@ describe("03-functions", function() {
   });
   it("4. define method using function expression", function() {
     var o = {
-      c: "c",
-      //TODO: m:.....
+      c: "q",
+      m: function(... args) {
+        return args.join('') + this.c;
+      }
     };
     assert(typeof o.m === "function");
-    assert(o.m("a", "b") === "abc")
+    assert(o.m("a", "b") === "abq")
+    o.c = 20
   });
   it("5. call method of one oject with another object", function() {
     let cat = {
@@ -49,7 +57,7 @@ describe("03-functions", function() {
     }
     assert(
       // TODO: fix the method call
-      soundMachine.play(dog) === "haf"
+      soundMachine.play.call(dog) === "haf"
     );
     assert(
       // TODO: fix the method call
@@ -62,26 +70,25 @@ describe("03-functions", function() {
     }
     let soundMachine = {
       play: function(repeat) {
-        // TODO: fix implementation
-        return this.sound;
+        return this.sound.repeat(repeat);
       }
     }
     assert.strictEqual(
       // TODO: fix the method call
-      soundMachine.play(dog, 3), "hafhafhaf"
+      soundMachine.play.call(dog, 3), "hafhafhaf"
     );
   });
   it("7. scope of var", function() {
     for (var i = 0; i < 10; i++) {
 
     };
-    assert(typeof i === "TODO:");
+    assert(typeof i === 'number');
   });
   it("8. scope of var", function() {
     for (let i = 0; i < 10; i++) {
 
     };
-    assert(typeof i === "TODO:");
+    assert(typeof i === 'undefined');
   });
   it("9. scopes 1", function() {
     let x = 10;
@@ -90,7 +97,7 @@ describe("03-functions", function() {
       let r = x + y;
       return r;
     }
-    assert(f(20) === "TODO:");
+    assert(f(20) === 30);
   });
   it("10. scopes 2", function() {
     let x = 10;
@@ -101,16 +108,15 @@ describe("03-functions", function() {
     }
     // TODO: ktory z asertov bude platit
     //assert(f(100) === 20);
-    //assert(f(100) === 200);
+    assert(f(100) === 200);
 
-    //assert(Object.is(f(),NaN));
+    assert(Object.is(f(),NaN));
     //assert(Object.is(f(),20));
   });
   it("11. Implementujte funkciu spravajucu sa podla poctu parametrov", function() {
-    function calc() {
-      //TODO:
-      //ak je pocet parny vrati "ok"
-      //ak je pocet neparny vrati "err" 
+    function calc(... args) {
+      if(args.length % 2 == 0) return 'ok';
+      else return 'err';
     };
     assert(calc(1, 2) === "ok");
     assert(calc(1, 2, 3) === "err");
@@ -118,9 +124,11 @@ describe("03-functions", function() {
   });
   it("12. Implementujte funkciu z troma alebo siestimi parametrami", function() {
     const calc = (...numbers) => {
-      // ak pride nespravny pocet
-      // tak error
-      // inak Max z parametrov
+      if(numbers.length == 3 || numbers.length == 6) {
+        return Math.max.apply(null, numbers);
+      } else {
+        throw new TypeError();
+      }
     };
     assert(calc(1, 2, 3) === 3);
     assert(calc(1, 2, 3, 5, 2, 3) === 5);
@@ -144,6 +152,13 @@ describe("03-functions", function() {
       // ak pride nespravny pocet
       // tak error
       // inak Max z parametrov
+      let numbers = [a,b,c].concat(others);
+
+      if(c !== undefined && numbers.length == 3 || numbers.length == 6) {
+        return Math.max.apply(null, numbers);
+      } else {
+        throw new TypeError();
+      }
     };
     // asserty su zhodne z predoslym
     assert(calc(1, 2, 3) === 3);
@@ -171,16 +186,20 @@ describe("03-functions", function() {
     // otazka zo skusky minuly rok
 
     //assert(printValue(o)===1);
-    //assert(printValue.call(o)===1);
-    //assert(printValue.apply(o)===1);
+    assert(printValue.call(o)===1);
+    assert(printValue.apply(o)===1);
     //assert(printValue.call(null, [o])===1);
     //assert(printValue.bind(o)===1);
-    //assert(printValue.bind(o)()===1);
+    assert(printValue.bind(o)()===1);
   });
   it("15. prefix a sufix", function() {
 
     function Formatter(prefix, sufix) {
-      // TODO: implement
+      this.sufix = sufix;
+      this.prefix = prefix;
+      this.format = function(s) {
+        return this.prefix + s + this.sufix;
+      }
     }
     let f1 = new Formatter("'", "'");
     assert(f1.format("text") === "'text'");
@@ -193,30 +212,39 @@ describe("03-functions", function() {
   });
   it("16. prefix a sufix (using closure)", function() {
 
-    function formater( /*TODO*/ ) {
-      return function( /*TODO*/ ) {
-        /*TODO*/
+    function formater(prefix, sufix) {
+      return function(s) {
+        return prefix + s + sufix;
       }
     }
     let format1 = formater("'", "'");
     assert(format1("text") === "'text'");
 
-    let format2 = formater("xxx", "xxx");
+    let format2 = formater("xxx", "yyy");
     assert(format2("text") === "xxxtextyyy");
 
   });
   it("17. prefix a sufix (using closure)", function() {
 
     function formater() {
-      /*TODO*/
+
+      const result = function(s) {
+        return result.prefix + s + result.sufix;
+      }
+      
+      result.prefix = arguments[0];
+      result.sufix = arguments[1];
+
+      return result;
     }
+
     let format1 = formater("'", "'");
     assert(format1("text") === "'text'");
 
-    let format2 = formater("xxx", "xxx");
+    let format2 = formater("xxx", "yyy");
     assert(format2("text") === "xxxtextyyy");
 
     format2.sufix = "zzz";
-    assert(format2("text") === "xxxTEXTzzz");
+    assert(format2("text") === "xxxtextzzz");
   });
 });
