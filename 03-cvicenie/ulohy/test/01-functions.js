@@ -1,4 +1,4 @@
-/*global describe:true,it:true,	after:true,before:true,afterEach:true,beforeEach:true */
+/*global describe:true,it:true, after:true,before:true,afterEach:true,beforeEach:true */
 const assert = require("assert");
 
 describe("03-functions", function() {
@@ -245,6 +245,10 @@ describe("03-functions", function() {
     assert(format2("text") === "xxxtextyyy");
 
     format2.sufix = "zzz";
+<<<<<<< HEAD
     assert(format2("text") === "xxxtextzzz");
+=======
+    assert(format2("TEXT") === "xxxTEXTzzz");
+>>>>>>> fa8e97dda52004675cc935f6462ed33ed180ff16
   });
 });
