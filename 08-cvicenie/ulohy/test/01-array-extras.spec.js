@@ -17,8 +17,7 @@ describe("FP - array functions", function() {
   it("02-students without git repo", () => {
     // pozrite si strukturu objektov v poli a implementujte
     // zoznam studentov ktorym chyba git repo
-    let missingGit = []; //TODO: implement
-
+    let missingGit = students.filter(({git}) => git === undefined);
 
     //debug(JSON.stringify(missingGit, null, 2));
     assert.deepStrictEqual(
@@ -27,7 +26,15 @@ describe("FP - array functions", function() {
     )
   });
 
-  function fixProjects(student) { return { ...student } }
+  function fixProjects(student) { 
+    let { projects = "" } = student;
+    return {
+      ...student,
+      projects: projects.split(",")
+        .map(s => s.trim())
+        .filter(Boolean)
+    }
+  }
 
   it("03-students with better project structure", () => {
     // TODO: student.project is string delimited by ","
@@ -37,7 +44,9 @@ describe("FP - array functions", function() {
     // o par riadkov vyzsie 
     let students3 = students.map(fixProjects);
 
-    //debug(JSON.stringify(students3, null, 2));
+    //console.log(students3);
+
+    debug(JSON.stringify(students3, null, 2));
     students3.forEach(s => {
       assert(Array.isArray(s.projects), `failed for ${s["#"]}`);
     })
@@ -49,6 +58,7 @@ describe("FP - array functions", function() {
     // z menej ako 3ma projektami
     let students4 = students
       .map(fixProjects)
+      .filter(({projects}) => projects.length < 3)
     // TODO:
 
     //debug(JSON.stringify(students4, null, 2));
@@ -61,10 +71,19 @@ describe("FP - array functions", function() {
 
   function fixPoints(student) {
     return {
-      // vrati original properties studenta
       ...student,
-      // a dopocitanu novu property points
-      points: [] //TODO: implement
+      points: points(student)
+    }
+
+    function points(student) {
+      
+      const regex = new RegExp("points");
+
+      let t = Object.keys(student)
+        .filter(s => s.match(regex))
+        .map(points => student[points])
+
+      return t;
     }
   }
 
@@ -87,7 +106,10 @@ describe("FP - array functions", function() {
 
   
   function totalPoints(student) {
-    // TODO: implementujte
+    return {
+      ...student,
+      totalPoints: student.points.reduce((x, y) => x + y)
+    }
   }
 
   it("06-total points of each student", () => {
@@ -111,7 +133,8 @@ describe("FP - array functions", function() {
     let sumOfAll = students
       .map(fixPoints)
       .map(totalPoints)
-      //.????()
+      .map(s => s.totalPoints)
+      .reduce((x, y) => x + y)
 
     debug(sumOfAll);
     assert(sumOfAll === 924);
@@ -140,7 +163,8 @@ describe("FP - array functions", function() {
     let groupedByProject = students
       .map(fixProjects)
       .reduce((uniqueProjects, student) => {
-        // TODO: 
+        
+        
 
       }, new Map())
     // convert map entries to array
