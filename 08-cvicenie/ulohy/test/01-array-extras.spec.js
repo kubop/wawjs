@@ -197,9 +197,9 @@ describe("FP - array functions", function() {
 
         return i !== students.length - 1 ? uniqueProjects : [...uniqueProjects];
       }, new Map())
-      .filter((s) => s[1].length > 1)
-      .reduce((result, element) => {
-        result.push({'project': element[0], 'students': element[1]});
+      .filter(([project, students]) => students.length > 1)
+      .reduce((result, [project, students]) => {
+        result.push({'project': project, 'students': students});
         return result;
       }, [])
 
