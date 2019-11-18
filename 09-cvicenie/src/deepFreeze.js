@@ -3,10 +3,16 @@ const traverse = require("traverse");
 
 module.exports = function(o) {
   traverse.forEach(o, function() {
-    this.post(({ node }) => Object.freeze(node));
+    if(this.node !== Object(this.node)) {
+      this.delete();
+    }
   });
+
   return o;
 }
+
+
+
 //-------------------------- tests ----------------------------------------
 process.env.SELF_TEST && ((deepFreeze) => {
   console.error(`[self test]:${__filename}:...`)

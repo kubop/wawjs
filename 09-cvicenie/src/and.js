@@ -1,7 +1,15 @@
+/*
 const and = (f1, ...fns) => x => !!fns.reduce(
   (r, fn) => r = r && fn(x),
   f1(x)
 );
+*/
+
+const and = function(...fns) {
+  return function(x) {
+    return fns.every(fn => fn(x));
+  }
+}
 
 // TODO: reimplement using recursion
 // and quick exit, avoid useles loop of whole array
